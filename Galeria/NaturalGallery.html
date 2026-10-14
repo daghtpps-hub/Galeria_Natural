@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <!-- ========================================== -->
+    <!-- COMPONENTE 1: METADATOS Y CONFIGURACIÓN    -->
+    <!-- ========================================== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería Botánica | Oasis Verde</title>
+
+    <!-- Cargamos Tailwind CSS desde CDN para los estilos rápidos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuración personalizada de Tailwind CSS (Colores y Fuentes) -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Habilita el modo oscuro activado por clase
+            theme: {
+                extend: {
+                    colors: {
+                        // Paleta verde botánico personalizada
+                        botanical: {
+                            50: '#f4f7f4',
+                            100: '#e3ebe3',
+                            200: '#c7d8c7',
+                            300: '#a1be2',
+                            400: '#759d76',
+                            500: '#537e55',
+                            600: '#3f6341',
+                            700: '#334f35',
+                            800: '#2b402c',
+                            900: '#1b291d',
+                            950: '#0d150e',
+                        },
+                        // Paleta de tonos arena suave
+                        sand: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#eee3cf',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Carga de Fuentes desde Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Iconos vectoriales de Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- ========================================== -->
+    <!-- COMPONENTE 2: ESTILOS CSS PERSONALIZADOS   -->
+    <!-- ========================================== -->
+    <style>
+        /* Efecto de cristal translúcido (Glassmorphism) */
+        .glass {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .dark .glass {
+            background: rgba(13, 21, 14, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Sistema de cuadrícula ajustado para mostrar 3 columnas en pantallas medianas/grandes */
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 1.5rem;
+        }
+        @media (min-width: 640px) { .masonry-grid { column-count: 2; } }
+        @media (min-width: 1024px) { .masonry-grid { column-count: 3; } } /* <- Ajustado exactamente a 3 columnas */
+
+        /* Evita que las tarjetas se corten entre columnas */
+        .break-inside-avoid {
+            break-inside: avoid;
+        }
+    </style>
+</head>
+<body class="bg-sand-50 dark:bg-botanical-950 text-botanical-900 dark:text-sand-50 font-sans transition-colors duration-500 min-h-screen flex flex-col selection:bg-botanical-300 selection:text-botanical-900">
+
+    <!-- ========================================== -->
+    <!-- COMPONENTE 3: BARRA DE NAVEGACIÓN (NAVBAR) -->
+    <!-- ========================================== -->
+    <header class="sticky top-0 z-40 glass transition-all duration-300 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logotipo e Identidad de Marca -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-full bg-botanical-600 text-sand-50 flex items-center justify-center shadow-lg group-hover:bg-botanical-500 transition-colors">
+                    <i data-lucide="sprout" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="font-serif text-2xl font-bold tracking-tight block leading-none">Belleza</span>
+                    <span class="text-xs font-medium text-botanical-600 dark:text-botanical-400 tracking-widest uppercase">Natural</span>
+                </div>
+            </a>
+
+            <!-- Botón para alternar el Modo Oscuro / Modo Claro -->
+            <div class="flex items-center gap-3">
+                <button id="themeToggle" class="p-2.5 rounded-full hover:bg-botanical-100 dark:hover:bg-botanical-900 transition-colors text-botanical-700 dark:text-botanical-300" aria-label="Cambiar Tema">
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                    <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- COMPONENTE 4: SECCIÓN HERO Y FILTROS       -->
+    <!-- ========================================== -->
+    <section class="relative py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
+        <!-- Etiqueta decorativa -->
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-botanical-100 dark:bg-botanical-900/60 text-botanical-800 dark:text-botanical-200 text-xs font-semibold uppercase tracking-wider mb-6">
+            <i data-lucide="leaf" class="w-3.5 h-3.5 text-botanical-600 dark:text-botanical-400"></i>
+         Oly._mer
+        </div>
+        
+        <!-- Título Principal -->
+        <h1 class="font-serif text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-botanical-950 dark:text-sand-50 max-w-4xl mx-auto leading-[1.15]">
+            La belleza oculta de la <span class="italic font-normal text-botanical-600 dark:text-botanical-400">naturaleza</span>
+        </h1>
+        
+        <!-- Subtítulo / Descripción -->
+        <p class="mt-6 text-lg sm:text-xl text-botanical-700/80 dark:text-botanical-200/80 max-w-2xl mx-auto font-light leading-relaxed">
+            Explora los pequeños momentos de la naturaleza
+        </p>
+
+        <!-- Botones de Filtro por Secciones -->
+        <div class="mt-10 max-w-3xl mx-auto space-y-6">
+            <div class="flex flex-wrap items-center justify-center gap-2" id="filterContainer">
+                <button data-filter="all" class="filter-btn active px-4 py-2 rounded-xl text-sm font-medium transition-all bg-botanical-700 text-white shadow-sm">Todas</button>
+                <button data-filter="flora" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white/60 dark:bg-botanical-900/60 hover:bg-botanical-100 dark:hover:bg-botanical-800 border border-botanical-200/50 dark:border-botanical-800">Flora</button>
+                <button data-filter="fauna" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white/60 dark:bg-botanical-900/60 hover:bg-botanical-100 dark:hover:bg-botanical-800 border border-botanical-200/50 dark:border-botanical-800">Fauna</button>
+                <button data-filter="paisajes" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white/60 dark:bg-botanical-900/60 hover:bg-botanical-100 dark:hover:bg-botanical-800 border border-botanical-200/50 dark:border-botanical-800">Paisajes</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- COMPONENTE 5: REJILLA DE LA GALERÍA        -->
+    <!-- ========================================== -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 flex-grow w-full">
+        <!-- Contenedor donde JavaScript renderizará las tarjetas de fotos -->
+        <div id="galleryGrid" class="masonry-grid space-y-6"></div>
+
+        <!-- Estado Vacío -->
+        <div id="emptyState" class="hidden text-center py-16">
+            <i data-lucide="flower-2" class="w-12 h-12 text-botanical-400 mx-auto mb-4"></i>
+            <h3 class="font-serif text-xl font-semibold">No hay fotos en esta sección</h3>
+            <p class="text-sm text-botanical-600 dark:text-botanical-400 mt-1">Prueba seleccionando otra categoría.</p>
+        </div>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- COMPONENTE 6: MODAL / VENTANA EMERGENTE    -->
+    <!-- ========================================== -->
+    <div id="plantModal" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4 bg-botanical-950/80 backdrop-blur-md">
+        <div class="bg-white dark:bg-botanical-900 rounded-3xl overflow-hidden max-w-4xl w-full max-h-[90vh] flex flex-col md:flex-row shadow-2xl border border-botanical-200/20 transform scale-95 transition-transform duration-300" id="modalContainer">
+            
+            <!-- Foto local dentro del Modal -->
+            <div class="relative md:w-1/2 h-64 md:h-auto bg-botanical-950 flex items-center justify-center overflow-hidden">
+                <img id="modalImage" src="" alt="" class="w-full h-full object-cover">
+                <!-- Botón Cerrar para móviles -->
+                <button id="closeModal" class="absolute top-4 right-4 md:hidden w-9 h-9 rounded-full bg-black/40 text-white flex items-center justify-center backdrop-blur-sm">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Información detallada, Frase y Fecha -->
+            <div class="md:w-1/2 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto">
+                <div>
+                    <!-- Encabezado del Modal -->
+                    <div class="flex items-center justify-between mb-4">
+                        <span id="modalCategory" class="px-3 py-1 rounded-full text-xs font-semibold bg-botanical-100 dark:bg-botanical-800 text-botanical-800 dark:text-botanical-200 uppercase tracking-wider"></span>
+                        <!-- Botón Cerrar para escritorio -->
+                        <button id="closeModalDesktop" class="hidden md:flex p-2 rounded-full hover:bg-botanical-100 dark:hover:bg-botanical-800 transition-colors">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+
+                    <!-- Títulos y Nombre científico -->
+                    <h2 id="modalTitle" class="font-serif text-3xl font-bold text-botanical-950 dark:text-sand-50"></h2>
+                    <p id="modalScientific" class="text-sm italic text-botanical-600 dark:text-botanical-400 font-serif mt-1 mb-4"></p>
+                    
+                    <!-- Frase Inspiradora Personalizada -->
+                    <div class="my-6 p-4 rounded-2xl bg-sand-100/60 dark:bg-botanical-950/40 border-l-4 border-botanical-600">
+                        <p class="text-xs uppercase tracking-wider font-bold text-botanical-500 mb-1">Dato:</p>
+                        <p id="modalQuote" class="text-sm italic font-serif text-botanical-800 dark:text-botanical-200 leading-relaxed"></p>
+                    </div>
+
+                    <!-- Fecha de Captura -->
+                    <div class="flex items-center gap-3 pt-4 border-t border-botanical-100 dark:border-botanical-800/60 text-botanical-600 dark:text-botanical-400 text-sm">
+                        <i data-lucide="calendar" class="w-4 h-4 text-botanical-500"></i>
+                        <span>Fecha de captura: <strong id="modalDate" class="text-botanical-900 dark:text-sand-50 font-medium"></strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- COMPONENTE 7: PIE DE PÁGINA (FOOTER)       -->
+    <!-- ========================================== -->
+    <footer class="border-t border-botanical-200/50 dark:border-botanical-900 bg-sand-100/40 dark:bg-botanical-950/80 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-botanical-600 dark:text-botanical-400">
+            <p>© 2026 oly._mer. Fotografia de Naturaleza</p>
+        </div>
+    </footer>
+
+    <!-- ========================================== -->
+    <!-- COMPONENTE 8: LÓGICA EN JAVASCRIPT         -->
+    <!-- ========================================== -->
+    <script>
+        // --- BASE DE DATOS LOCAL CON TUS FOTOS, FRASES Y FECHAS ---
+        const plants = [
+            {
+                id: 1,
+                title: "TULIPÁN",
+                scientific: "Tulipán",
+                category: "flora",
+                categoryLabel: "Flora",
+                image: "flor1.jpg.jpeg",
+                quote: "“Son flores que cambian su color dependiendo al pH del suelo o del agua”",
+                date: "08 de octubre, 2026"
+            },
+             {
+                id: 2,
+                title: "ESCARABAJO VERDE DE JUNIO",
+                scientific: "Escarabajo verde de junio",
+                category: "fauna",
+                categoryLabel: "Fauna",
+                image: "animalito.jpeg",
+                quote: "“Emite un fuerte zumbido simililar al de un abejorro, se alimenta de frutos maduros, habita bajo tierra”",
+                date: "05 de agosto, 2026"
+            },
+            {
+              
+                id: 3,
+                title: "LANTANA",
+                scientific: "Lantana",
+                category: "flora",
+                categoryLabel: "Flora",
+                image: "flor5.jpg.jpeg",
+                quote: "“Sus flores cambian de color a medida que envejece”",
+                date: "03 de octubre, 2026" 
+            },
+            {
+                id: 4,
+                title: "GUACAMAYA VERDE",
+                scientific: "Guacamaya verde",
+                category: "fauna",
+                categoryLabel: "fauna",
+                image: "ANIMALITOOO.jpeg",
+                quote: "“Son aves monogamas que forman parejas de por vida y vuelan en bandadas ruidosas”",
+                date: "03 de Agosto, 2026"
+            },
+            {
+                id: 5,
+                title: "ALAMANDA MORADA",
+                scientific: "Copa de vino",
+                category: "flora",
+                categoryLabel: "Flora",
+                image: "flor2.jpg.jpeg",
+                quote: "“Segrega un látex osavia que es toxico, lo que funciona como un mecanismo de protección natural.”",
+                date: "8 de octubre, 2026"
+            },
+             {
+                id: 4,
+                title: "PATO CRESTADO",
+                scientific: "Pato crestado",
+                category: "fauna",
+                categoryLabel: "fauna",
+                image: "animalito2.jpeg",
+                quote: "“Es extrictamente monogano, territorial, vive en pareja o grupos”",
+                date: "03 de agosto, 2026"
+            },
+             {
+                id: 5,
+                title: "P",
+                scientific: "P",
+                category: "paisajes",
+                categoryLabel: "paisajes",
+                image: "P3.jpeg",
+                quote: "“”",
+                date: "25 de agosto, 2025"
+            },
+             {
+                id: 5,
+                title: "P",
+                scientific: "P",
+                category: "paisajes",
+                categoryLabel: "paisajes",
+                image: "PP2.jpeg",
+                quote: "“”",
+                date: "03 de julio, 2025"
+            },
+             {
+                id: 5,
+                title: "P",
+                scientific: "P",
+                category: "paisajes",
+                categoryLabel: "paisajes",
+                image: "PP1.jpeg",
+                quote: "“”",
+                date: "13 de enero, 2026"
+            }
+            
+        ];
+
+        // --- VARIABLES DE ESTADO ---
+        let activeFilter = 'all';
+
+        // --- REFERENCIAS A ELEMENTOS DEL DOM ---
+        const galleryGrid = document.getElementById('galleryGrid');
+        const emptyState = document.getElementById('emptyState');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const themeToggle = document.getElementById('themeToggle');
+
+        // Referencias del Modal
+        const plantModal = document.getElementById('plantModal');
+        const modalContainer = document.getElementById('modalContainer');
+        const closeModal = document.getElementById('closeModal');
+        const closeModalDesktop = document.getElementById('closeModalDesktop');
+        const modalImage = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalScientific = document.getElementById('modalScientific');
+        const modalCategory = document.getElementById('modalCategory');
+        const modalQuote = document.getElementById('modalQuote');
+        const modalDate = document.getElementById('modalDate');
+
+        // --- FUNCIÓN PARA RENDERIZAR LA GALERÍA ---
+        function renderGallery() {
+            galleryGrid.innerHTML = '';
+
+            const filteredPlants = plants.filter(plant => {
+                return activeFilter === 'all' || plant.category === activeFilter;
+            });
+
+            if (filteredPlants.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                filteredPlants.forEach(plant => {
+                    const card = document.createElement('div');
+                    card.className = 'break-inside-avoid mb-6 group cursor-pointer';
+                    card.innerHTML = `
+                        <div class="relative overflow-hidden rounded-3xl bg-white dark:bg-botanical-900 shadow-md hover:shadow-2xl transition-all duration-500 border border-botanical-200/40 dark:border-botanical-800/40">
+                            <div class="overflow-hidden aspect-[4/5] relative">
+                                <img src="${plant.image}" alt="${plant.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" onerror="this.src='https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=800&q=80'">
+                                <div class="absolute inset-0 bg-gradient-to-t from-botanical-950/80 via-botanical-950/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                                <span class="absolute top-4 left-4 glass px-3 py-1 rounded-full text-xs font-semibold tracking-wider text-botanical-900 dark:text-sand-50 uppercase shadow-sm">
+                                    ${plant.categoryLabel}
+                                </span>
+                            </div>
+                            <div class="p-5 relative">
+                                <h3 class="font-serif text-xl font-bold text-botanical-950 dark:text-sand-50 group-hover:text-botanical-600 dark:group-hover:text-botanical-400 transition-colors">${plant.title}</h3>
+                                <p class="text-xs italic font-serif text-botanical-500 dark:text-botanical-400 mt-0.5">${plant.scientific}</p>
+                            </div>
+                        </div>
+                    `;
+                    card.addEventListener('click', () => openModal(plant));
+                    galleryGrid.appendChild(card);
+                });
+            }
+            lucide.createIcons();
+        }
+
+        // --- FUNCIÓN PARA ABRIR EL MODAL ---
+        function openModal(plant) {
+            modalImage.src = plant.image;
+            modalTitle.textContent = plant.title;
+            modalScientific.textContent = plant.scientific;
+            modalCategory.textContent = plant.categoryLabel;
+            modalQuote.textContent = plant.quote;
+            modalDate.textContent = plant.date;
+
+            plantModal.classList.remove('hidden');
+            setTimeout(() => {
+                plantModal.classList.remove('opacity-0');
+                modalContainer.classList.remove('scale-95');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        // --- FUNCIÓN PARA CERRAR EL MODAL ---
+        function hideModal() {
+            plantModal.classList.add('opacity-0');
+            modalContainer.classList.add('scale-95');
+            setTimeout(() => {
+                plantModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        // --- EVENTOS DE CIERRE DEL MODAL ---
+        closeModal.addEventListener('click', hideModal);
+        closeModalDesktop.addEventListener('click', hideModal);
+        plantModal.addEventListener('click', (e) => {
+            if (e.target === plantModal) hideModal();
+        });
+
+        // --- MANEJO DE LOS BOTONES DE FILTRO POR SECCIÓN ---
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-botanical-700', 'text-white', 'shadow-sm');
+                    b.classList.add('bg-white/60', 'dark:bg-botanical-900/60');
+                });
+                btn.classList.add('bg-botanical-700', 'text-white', 'shadow-sm');
+                btn.classList.remove('bg-white/60', 'dark:bg-botanical-900/60');
+                
+                activeFilter = btn.dataset.filter;
+                renderGallery();
+            });
+        });
+
+        // --- MANEJO DEL MODO OSCURO ---
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+
+        // --- INICIALIZACIÓN INICIAL ---
+        renderGallery();
+        lucide.createIcons();
+    </script>
+</body>
+</html>
